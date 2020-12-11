@@ -1,15 +1,21 @@
 package com.example.CRUDAPICheckpoint;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.PublicView.class)
     private Long id;
+    @JsonView(Views.PublicView.class)
     private String email;
+    @JsonView(Views.PrivateView.class)
     private String password;
 
     public Long getId() {
