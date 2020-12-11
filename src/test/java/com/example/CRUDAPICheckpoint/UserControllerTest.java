@@ -52,30 +52,25 @@ public class UserControllerTest {
 
 
     @Test
+
     public void testGetAllUsers() throws Exception {
         User user = new User();
-        user.setId(1L);
+
         user.setEmail("john@example.com");
         user.setPassword("password1");
         repository.save(user);
 
-        user.setId(2L);
+
         user.setEmail("eliza@example.com");
         user.setPassword("password2");
         repository.save(user);
 
-        user.setId(3L);
+        user.setId(22L);
         user.setEmail("angelica@example.com");
         user.setPassword("something-secret");
         repository.save(user);
 
         MockHttpServletRequestBuilder request = get("/users");
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content("{\n" +
-//                        "    \"id\": 3,\n" +
-//                        "    \"title\": \"Bellman Ford\",\n" +
-//                        "    \"deliveredOn\": \"2017-05-02\"\n" +
-//                        "}");
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
@@ -84,6 +79,7 @@ public class UserControllerTest {
     }
 
     @Test
+
     public void testPostNewUser () throws Exception {
         MockHttpServletRequestBuilder request = post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,12 +89,13 @@ public class UserControllerTest {
                         "  }");
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(4)))
+                .andExpect(jsonPath("$.id", is(6)))
                 .andExpect(jsonPath("$.email", is("john@example.com")) );
 
     }
 
     @Test
+
     public void testGetUserById () throws Exception {
         MockHttpServletRequestBuilder request = get("/users/2");
 
@@ -106,5 +103,45 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(2)))
                 .andExpect(jsonPath("$.email", is("eliza@example.com")));
+    }
+
+    @Test
+
+    public void testUpdateUserById () throws Exception {
+        MockHttpServletRequestBuilder request = patch("/users/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"email\": \"john@example.com\",\n" +
+                        "    \"password\": \"something-secret\"\n" +
+                        "  }");
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(2)))
+                .andExpect(jsonPath("$.email", is("john@example.com")));
+    }
+
+    @Test
+
+    public void testDeleteUserById () throws Exception {
+        MockHttpServletRequestBuilder request = delete("/users/2");
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("count", is(2)));
+    }
+
+    @Test
+
+    public void testAuthenticateTrue () throws Exception {
+        MockHttpServletRequestBuilder request = delete("/users/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"email\": \"john@example.com\",\n" +
+                        "    \"password\": \"something-secret\"\n" +
+                        "  }");
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authenticated", is(true)));
     }
 }
