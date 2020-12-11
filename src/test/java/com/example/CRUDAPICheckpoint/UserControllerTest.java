@@ -89,7 +89,7 @@ public class UserControllerTest {
                         "  }");
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(6)))
+                .andExpect(jsonPath("$.id", is(8)))
                 .andExpect(jsonPath("$.email", is("john@example.com")) );
 
     }
@@ -97,12 +97,12 @@ public class UserControllerTest {
     @Test
 
     public void testGetUserById () throws Exception {
-        MockHttpServletRequestBuilder request = get("/users/2");
+        MockHttpServletRequestBuilder request = get("/users/3");
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(2)))
-                .andExpect(jsonPath("$.email", is("eliza@example.com")));
+                .andExpect(jsonPath("$.id", is(3)))
+                .andExpect(jsonPath("$.email", is("angelica@example.com")));
     }
 
     @Test
@@ -128,13 +128,29 @@ public class UserControllerTest {
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("count", is(2)));
+                .andExpect(jsonPath("count", is(4)));
     }
 
     @Test
 
     public void testAuthenticateTrue () throws Exception {
-        MockHttpServletRequestBuilder request = delete("/users/authenticate")
+        MockHttpServletRequestBuilder request = post("/users/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"email\": \"john@example.com\",\n" +
+                        "    \"password\": \"password1\"\n" +
+                        "  }");
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authenticated", is(true)))
+                .andExpect(jsonPath("$.user.id", is(1)))
+                .andExpect(jsonPath("$.user.email", is("john@example.com")));
+    }
+
+    @Test
+
+    public void testAuthenticateFalse () throws Exception {
+        MockHttpServletRequestBuilder request = post("/users/authenticate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\n" +
                         "    \"email\": \"john@example.com\",\n" +
@@ -142,6 +158,6 @@ public class UserControllerTest {
                         "  }");
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.authenticated", is(true)));
+                .andExpect(jsonPath("$.authenticated", is(false)));
     }
 }
