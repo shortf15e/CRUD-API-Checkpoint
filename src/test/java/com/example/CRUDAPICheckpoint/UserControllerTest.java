@@ -1,7 +1,9 @@
 package com.example.CRUDAPICheckpoint;
 
+import org.assertj.core.condition.DoesNotHave;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.stubbing.answers.DoesNothing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import javax.transaction.Transactional;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.instanceOf;
+
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -93,9 +95,16 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(4)))
                 .andExpect(jsonPath("$.email", is("john@example.com")) );
-//        String actual = repository.findById(3L).get().getTitle();
-//        String expected = "Who is you're daddy?";
-//        assertEquals(expected, actual);
+
     }
 
+    @Test
+    public void testGetUserById () throws Exception {
+        MockHttpServletRequestBuilder request = get("/users/2");
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(2)))
+                .andExpect(jsonPath("$.email", is("eliza@example.com")));
+    }
 }

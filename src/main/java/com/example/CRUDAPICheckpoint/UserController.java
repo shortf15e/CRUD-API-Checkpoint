@@ -16,6 +16,12 @@ public class UserController {
     @JsonView(Views.PublicView.class)
     public Iterable<User> all() { return this.repository.findAll(); }
 
+    @GetMapping("/{id}")
+    @JsonView(Views.PublicView.class)
+    public User getUserById (@PathVariable Long id) {
+        return this.repository.findById(id).get();
+    }
+
     @PostMapping("")
     @JsonView(Views.PublicView.class)
     public User postNewUser (@RequestBody User newUser) {
